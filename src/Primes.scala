@@ -1,3 +1,22 @@
+object Primehelpers {
+
+  def primefactors(number: Int, list: List[Int] = List()): List[Int] = {
+    for (n <- 2 to number if (number % n == 0)) {
+      return primefactors(number / n, list :+ n)
+    }
+    list
+  }
+
+  // Sieving integral numbers
+  // as presented in Odersky's "Functional Programming Principles in Scala" Coursera course
+  def sieve(s: Stream[Int]): Stream[Int] = {
+    s.head #:: sieve(s.tail.filter(_ % s.head != 0))
+  }
+
+  // All primes as a lazy sequence
+  val primes = sieve(Stream.from(2))
+}
+
 object Problem_03 extends App {
 
   //println(primefactors(24))
@@ -10,14 +29,6 @@ object Problem_03 extends App {
   println(x)
   println(y)
 
-
-  def primefactors(number: Int, list: List[Int] = List()): List[Int] = {
-    for (n <- 2 to number if (number % n == 0)) {
-      return primefactors(number / n, list :+ n)
-    }
-    list
-  }
-
   def largestPrimeFactor(x : BigInt) = {
     def loop(factor:BigInt, number: BigInt): BigInt =
       if (factor == number) number
@@ -25,23 +36,6 @@ object Problem_03 extends App {
       else loop(factor + 1, number)
     loop (BigInt(2), x)
   }
-
-  /*def largestPrime(number: BigInt, largest: BigInt): BigInt = {
-    var n = BigInt(2)
-    while(n < number) {
-      if(number % n == 0) {
-        return largestPrime(number / n, largest)
-      }
-      n = BigInt(n+1)
-    }
-
-    for (n <- 2 to number if (number % n == 0)) {
-      if (n > largest) return largestPrime(number / n, n)
-      else
-    }
-    largest
-  }
-*/
 }
 
 object Problem_05 extends App {
@@ -63,10 +57,18 @@ object Problem_05 extends App {
   def multiples(number: Int): List[Int]= {
     def loop(number: Int, n: Int, primefactors: List[Int]): List[Int] = {
       if(n >= number) return primefactors
-      val primefactorsTmp = Problem_03.primefactors(n)
+      val primefactorsTmp = Primehelpers.primefactors(n)
       //println(primefactors ::: primefactorsTmp.diff(primefactors))
       loop(number, n+1, primefactors ::: primefactorsTmp.diff(primefactors))
     }
     loop(number, 2, List())
   }
+}
+
+object Problem_07 extends App {
+  println(Primehelpers.primes.take(6).toList)
+  println (Timer.time {
+    println(Primehelpers.primes.take(10001).last)
+  })
+
 }
