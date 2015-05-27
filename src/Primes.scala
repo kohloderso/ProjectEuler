@@ -7,15 +7,21 @@ object Primehelpers {
     list
   }
 
-  // Sieving integral numbers
-  // as presented in Odersky's "Functional Programming Principles in Scala" Coursera course
-  def sieve(s: Stream[Int]): Stream[Int] = {
-    s.head #:: sieve(s.tail.filter(_ % s.head != 0))
+  def sieve(nums: Stream[Int]): Stream[Int] = {
+    Stream.cons(nums.head,
+      sieve((nums.tail) filter (x => x % nums.head != 0)))
   }
-
   // All primes as a lazy sequence
   val primes = sieve(Stream.from(2))
+
+  def isPrime(n: Int): Boolean =
+    (2 until n) forall (i => n % i != 0)
+
+  def isPrime2(n: Long) = {
+    !(2L to math.sqrt(n).toLong).exists(n % _ == 0)
+  }
 }
+
 
 object Problem_03 extends App {
 
@@ -70,5 +76,19 @@ object Problem_07 extends App {
   println (Timer.time {
     println(Primehelpers.primes.take(10001).last)
   })
+
+}
+
+object Problem_10 extends App {
+
+  var primes = Primehelpers.primes
+  var sum = 0
+  println(Timer.time {
+    val list  = List.range(2L,2000000L)
+    val primes = list.filter(x => Primehelpers.isPrime2(x))
+    println(primes)
+    println(primes.sum)
+  })
+
 
 }
